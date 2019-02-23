@@ -38,9 +38,12 @@ spider = [15, 35] # initial position values
 w.addch(spider[0], spider[1], curses.ACS_PI)
 
 key = KEY_RIGHT
+score = 0
 
 while key != 27:
     w.timeout(150)
+    w.border(0)
+    w.addstr(0, 2, 'Score : ' + str(score) + ' ')
     # get the next movement 
     prevKey = key
     nextKey = w.getch()
@@ -82,6 +85,17 @@ while key != 27:
     if ant[1] < 0:
         border_choice = randint(0,3)
         ant = spawn_ant(border_choice)
+
+    # if the spider goes out of bounds, it comes out the other side
+    if spider[0] >= 30:
+        spider[0] = 1
+    if spider[0] < 0:
+        spider[0] = 29
+    if spider[1] >= 70:
+        spider[1] = 1
+    if spider[1] < 0:
+        spider[1] = 69
+
     
     # draw ant again
     w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
