@@ -60,6 +60,18 @@ while key != 27:
     if key not in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, 27]:
         key = prevKey
 
+    # remove the previous spider
+    w.addch(spider[0], spider[1], ' ')
+    # handle spider movement
+    if key == KEY_RIGHT:
+        spider[1] += 1
+    if key == KEY_DOWN:
+        spider[0] += 1
+    if key == KEY_LEFT:
+        spider[1] -= 1
+    if key == KEY_UP:
+        spider[0] -= 1
+
     # remove the previous ant
     w.addch(ant[0], ant[1], ' ')
     # increment coordinates for ant
@@ -99,4 +111,6 @@ while key != 27:
     
     # draw ant again
     w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
+     # draw spider again
+    w.addch(spider[0], spider[1], curses.ACS_PI)
 
