@@ -31,8 +31,11 @@ border_choice = randint(0,3)
 ant = spawn_ant(border_choice)
 # add the ant to the screen
 w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
-ant_direction = randint(0,3)
 
+# spider
+spider = [15, 35] # initial position values
+# add the spider to the screen
+w.addch(spider[0], spider[1], curses.ACS_PI)
 
 key = KEY_RIGHT
 
