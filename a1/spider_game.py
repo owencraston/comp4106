@@ -37,6 +37,7 @@ ant_direction = randint(0,3)
 key = KEY_RIGHT
 
 while key != 27:
+    w.timeout(150)
     # get the next movement 
     prevKey = key
     nextKey = w.getch()
@@ -52,4 +53,33 @@ while key != 27:
     # hanle invalid keys (anything but the arrow keys and escape key)
     if key not in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, 27]:
         key = prevKey
+
+    # remove the previous ant
+    w.addch(ant[0], ant[1], ' ')
+    # increment coordinates for ant
+    if border_choice == 0:
+        ant[1] += 1
+    if border_choice == 1:
+        ant[0] += 1
+    if border_choice == 2:
+        ant[1] -=1
+    if border_choice == 3:
+        ant[0] -= 1
+
+    # if the ant goes out of bounds 
+    if ant[0] >= 30:
+        border_choice = randint(0,3)
+        ant = spawn_ant(border_choice)
+    if ant[0] < 0:
+        border_choice = randint(0,3)
+        ant = spawn_ant(border_choice)
+    if ant[1] >= 70:
+        border_choice = randint(0,3)
+        ant = spawn_ant(border_choice)
+    if ant[1] < 0:
+        border_choice = randint(0,3)
+        ant = spawn_ant(border_choice)
+    
+    # draw ant again
+    w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
 
