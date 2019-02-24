@@ -26,8 +26,7 @@ def spawn_ant(border_choice):
     else:
         raise ValueError('border_choice must be an int value between 0-3.' + border_choice + ' was found')
 
-def handle_ant_movement(ant):
-    direction = randint(0,3)
+def handle_ant_movement(direction, ant):
     if direction == 0:
         ant[1] += 1
     if direction == 1:
@@ -69,7 +68,7 @@ while w.getch() != 27:
         spider[1] += 2
         spider[0] -= 1
         # move the ant randomlly
-        ant = handle_ant_movement(ant)
+        ant = handle_ant_movement(border_choice, ant)
     if w.getch() == KEY_DOWN:
         # remove the previous spider
         w.addch(spider[0], spider[1], ' ')
@@ -77,7 +76,7 @@ while w.getch() != 27:
         w.addch(ant[0], ant[1], ' ')
         spider[0] += 1
         # move the ant randomlly
-        ant = handle_ant_movement(ant)
+        ant = handle_ant_movement(border_choice, ant)
     if w.getch() == KEY_LEFT:
         # remove the previous spider
         w.addch(spider[0], spider[1], ' ')
@@ -86,7 +85,7 @@ while w.getch() != 27:
         spider[1] -= 2
         spider[0] -= 1
         # move the ant randomlly
-        ant = handle_ant_movement(ant)
+        ant = handle_ant_movement(border_choice, ant)
     if w.getch() == KEY_UP:
         # remove the previous spider
         w.addch(spider[0], spider[1], ' ')
@@ -95,7 +94,7 @@ while w.getch() != 27:
         spider[0] -= 2
         spider[1] += 1
         # move the ant randomlly
-        ant = handle_ant_movement(ant)
+        ant = handle_ant_movement(border_choice, ant)
 
     # if the ant goes out of bounds 
     if ant[0] >= 30:
