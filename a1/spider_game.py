@@ -120,6 +120,12 @@ while w.getch() != 27:
     if spider[1] < 0:
         spider[1] = 69
 
+    # check if the spider eats the ant 
+    if spider == ant:
+        score += 1
+        border_choice = randint(0,3)
+        ant = spawn_ant(border_choice)
+
     
     # draw ant again
     w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
