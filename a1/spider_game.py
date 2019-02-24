@@ -53,48 +53,39 @@ w.addch(spider[0], spider[1], curses.ACS_PI)
 # key = KEY_RIGHT
 score = 0
 
+def get_next_move(spidy, key):
+    # get next move based on key
+    if key == KEY_RIGHT:
+        spidy[1] += 2
+        spidy[0] -= 1
+    if key == KEY_DOWN:
+        spidy[0] += 1
+    if key == KEY_LEFT:
+        spidy[1] -= 2
+        spidy[0] -= 1
+    if key== KEY_UP:
+        spidy[0] -= 2
+        spidy[1] += 1
+    else:
+        return spidy
+
 while w.getch() != 27:
     w.timeout(50)
     w.border(0)
     w.addstr(0, 2, 'Score : ' + str(score) + ' ')
 
     # handle spider movement
-    if w.getch() == KEY_RIGHT:
+    key = w.getch()
+    if key:
         # remove the previous spider
         w.addch(spider[0], spider[1], ' ')
         # remove the previous ant
         w.addch(ant[0], ant[1], ' ')
         # move accordingly
-        spider[1] += 2
-        spider[0] -= 1
+        spider = get_next_move(spider, key)
         # move the ant randomlly
         ant = handle_ant_movement(border_choice, ant)
-    if w.getch() == KEY_DOWN:
-        # remove the previous spider
-        w.addch(spider[0], spider[1], ' ')
-        # remove the previous ant
-        w.addch(ant[0], ant[1], ' ')
-        spider[0] += 1
-        # move the ant randomlly
-        ant = handle_ant_movement(border_choice, ant)
-    if w.getch() == KEY_LEFT:
-        # remove the previous spider
-        w.addch(spider[0], spider[1], ' ')
-        # remove the previous ant
-        w.addch(ant[0], ant[1], ' ')
-        spider[1] -= 2
-        spider[0] -= 1
-        # move the ant randomlly
-        ant = handle_ant_movement(border_choice, ant)
-    if w.getch() == KEY_UP:
-        # remove the previous spider
-        w.addch(spider[0], spider[1], ' ')
-        # remove the previous ant
-        w.addch(ant[0], ant[1], ' ')
-        spider[0] -= 2
-        spider[1] += 1
-        # move the ant randomlly
-        ant = handle_ant_movement(border_choice, ant)
+        key = None
 
     # if the ant goes out of bounds 
     if ant[0] >= 30:
