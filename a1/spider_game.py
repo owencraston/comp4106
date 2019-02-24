@@ -65,6 +65,7 @@ while w.getch() != 27:
         w.addch(spider[0], spider[1], ' ')
         # remove the previous ant
         w.addch(ant[0], ant[1], ' ')
+        # move accordingly
         spider[1] += 2
         spider[0] -= 1
         # move the ant randomlly
@@ -82,7 +83,8 @@ while w.getch() != 27:
         w.addch(spider[0], spider[1], ' ')
         # remove the previous ant
         w.addch(ant[0], ant[1], ' ')
-        spider[1] -= 1
+        spider[1] -= 2
+        spider[0] -= 1
         # move the ant randomlly
         ant = handle_ant_movement(ant)
     if w.getch() == KEY_UP:
@@ -90,7 +92,8 @@ while w.getch() != 27:
         w.addch(spider[0], spider[1], ' ')
         # remove the previous ant
         w.addch(ant[0], ant[1], ' ')
-        spider[0] -= 1
+        spider[0] -= 2
+        spider[1] += 1
         # move the ant randomlly
         ant = handle_ant_movement(ant)
 
