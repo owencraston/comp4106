@@ -38,7 +38,6 @@ def handle_ant_movement(direction, ant):
     return ant
 
 
-
 border_choice = randint(0,3)
 ant = spawn_ant(border_choice)
 # add the ant to the screen
@@ -68,6 +67,38 @@ def get_next_move(spidy, key):
         spidy[1] += 1
     else:
         return spidy
+
+def BFS(spider_state, ant_state):
+    # set true when final state is true
+    goal = False
+    # count the number of moves it takes
+    move_count = 0
+    # get the initial state
+    node_list = [spider_state]
+    # while the goal has not been reached and the nodelist isnt empty
+    while goal == False or len(node_list) == 0:
+        # take the first element from the node list
+        e = node_list.pop()
+        # check if the list is empty
+        if len(node_list) == 0:
+            break
+        # check every option 
+        for key in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]:
+            # increment the move counter
+            move_count +=1
+            # use the helper function to get the next move for the spider
+            e = get_next_move(e, key)
+            # get the next move for the ant
+            ant_state = handle_ant_movement(border_choice, ant_state)
+            # if the ant and spider are the same (coordinates) the goal has been reached
+            if e == ant_state:
+                goal = True
+            else:
+                # append this state to the back of the list
+                node_list.append(e)
+    return node_list
+            
+print(BFS(spider, ant))
 
 while w.getch() != 27:
     w.timeout(50)
@@ -122,3 +153,4 @@ while w.getch() != 27:
     w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
      # draw spider again
     w.addch(spider[0], spider[1], curses.ACS_PI)
+
