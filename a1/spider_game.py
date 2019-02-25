@@ -83,7 +83,7 @@ while w.getch() != 27:
         w.addch(ant[0], ant[1], ' ')
         # move accordingly
         spider = get_next_move(spider, key)
-        # move the ant randomlly
+        # move the ant
         ant = handle_ant_movement(border_choice, ant)
         key = None
 
