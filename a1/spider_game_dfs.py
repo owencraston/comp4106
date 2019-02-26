@@ -117,6 +117,8 @@ def DFS(spider_state, ant_state):
     count = 0
     initial_node = Node(spider_state, None, 1)
     node_list = [initial_node]
+    max_depth = 1
+    current_depth = 1
     initial_ant_state = ant_state
 
     # check if the first two states math
@@ -124,27 +126,26 @@ def DFS(spider_state, ant_state):
         goal = True
         return node_list
     while goal == False and len(node_list) != 0:
-        e = node_list.pop(0)
         future_ant_state = initial_ant_state
-        for i in range(0, e.depth):
-            future_ant_state = get_next_ant_move(border_choice, initial_ant_state)
-        for move in POSSIBLE_MOVES:
-            count += 1
-            next_node = Node(None, None, None)
-            next_node.state = get_next_spider_move(deepcopy(e.state), move)
-            next_node.parent = e
-            next_node.depth = e.depth + 1
-            # print(future_ant_state)
-            if next_node.state == future_ant_state:
-                goal = True
-                print('you win')
-                break
-            else:
-                node_list.append(next_node)
+        future_ant_state = get_next_ant_move(border_choice, initial_ant_state)
+
+        for j in range(0, 8):
+            for i in range(current_depth, max_depth):
+                next_node = Node(None, None, None)
+                next_node.state = get_next_spider_move(deepcopy(e.state), move)
+                next_node.parent = e
+                next_node.depth = e.depth + 1
+
+                if next_node.state == future_ant_state:
+                    goal = True
+                    print('you win')
+                    break
+                else:
+                    node_list.append(next_node)
     return node_list
 
 
-path = BFS(spider, ant)
+path = DFS(spider, ant)
 print(path)
             
             

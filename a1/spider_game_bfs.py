@@ -1,8 +1,19 @@
+import curses
 from random import randint
 from copy import deepcopy
 
 height = 15
 width = 15
+
+# init game
+screen = curses.initscr()
+curses.curs_set(0)
+score = 0
+x, y = 0, 0
+w = curses.newwin(height, width, x, y)
+w.keypad(1)
+w.border(0)
+w.nodelay(1)
 def spawn_ant(border_choice):
     if (border_choice >= 0 and border_choice <= 3):    
         border = {
@@ -108,9 +119,13 @@ class Node():
         self.parent = parent
         self.depth = depth
 
-spider = [randint(1,width - 1), randint(1, height - 1)]
-ant = [randint(1,width - 1), randint(1, height - 1)]
+spider = [5, 5]
 border_choice = randint(0,3)
+ant = spawn_ant(border_choice)
+
+# draw the objects
+w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
+w.addch(spider[0], spider[1], curses.ACS_PI)
 
 def BFS(spider_state, ant_state):
     goal = False
@@ -146,5 +161,29 @@ def BFS(spider_state, ant_state):
 
 path = BFS(spider, ant)
 print(path)
+
+while w.getch() != 27:
+    w.timeout(50)
+    w.border(0)
+    w.addstr(0, 2, 'Score : ' + str(score) + ' ')
+
+    if len(path) != 0:
+        # remove the previous spider
+        w.addch(spider[0], spider[1], ' ')
+        # remove the previous ant
+        w.addch(ant[0], ant[1], ' ')
+        # move accordingly
+        spider = path.pop(0).state
+
+    # check if the spider eats the ant 
+    if spider == ant:
+        score += 1
+        border_choice = randint(0,3)
+        ant = spawn_ant(border_choice)
+
+    # draw ant again
+    w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
+     # draw spider again
+    w.addch(spider[0], spider[1], curses.ACS_PI)
             
             
