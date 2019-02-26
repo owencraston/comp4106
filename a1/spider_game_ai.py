@@ -1,6 +1,7 @@
 import curses
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN
 from random import randint
+from copy import deepcopy
 
 # init game
 # screen = curses.initscr()
@@ -52,22 +53,65 @@ spider = [15, 35] # initial position values
 # key = KEY_RIGHT
 score = 0
 
-def get_next_move(spidy, key):
-    import pdb; pdb.set_trace()
-    # get next move based on key
-    if key == KEY_RIGHT:
-        spidy[1] += 2
-        spidy[0] -= 1
-    if key == KEY_DOWN:
-        spidy[0] += 1
-    if key == KEY_LEFT:
-        spidy[1] -= 2
-        spidy[0] -= 1
-    if key== KEY_UP:
-        spidy[0] -= 2
-        spidy[1] += 1
+# def get_next_move(spidy, key):
+#     # get next move based on key
+#     if key == KEY_RIGHT:
+#         spidy[1] += 2
+#         spidy[0] -= 1
+#     if key == KEY_DOWN:
+#         spidy[0] += 1
+#     if key == KEY_LEFT:
+#         spidy[1] -= 2
+#         spidy[0] -= 1
+#     if key== KEY_UP:
+#         spidy[0] -= 2
+#         spidy[1] += 1
+#     else:
+#         return spidy
+
+def get_next_move(spidy, move):
+    if spidy:
+        # farthest right
+        if move == 0:
+            spidy[1] += 2
+            spidy[0] -= 1
+        # furhter up and right
+        if move == 1:
+            spidy[1] += 1
+            spidy[0] -= 2
+        # backwords
+        if move == 2:
+            spidy[0] += 1
+        # farthest left
+        if move == 3:
+            spidy[1] -= 2
+            spidy[0] -= 1
+        # furhter up and to the left
+        if move == 4:
+            spidy[1] += 1
+            spidy[0] -= 2
+        # one left
+        if move == 5:
+            spidy[1] -= 1
+        # one right
+        if move == 6:
+            spidy[1] -= 1
+        # side right
+        if move == 7:
+            spidy[1] += 1
+            spidy[0] += 1
+        # side left
+        if move == 8:
+            spidy[1] -= 1
+            spidy[0] -= 1
+        else:
+            # if no valid direction was given
+            return spidy
     else:
-        return spidy
+        raise ValueError('spidy must contain an x and y position. %s',  spidy, ' was found')
+
+
+POSSIBLE_MOVES = [0,1, 2, 3, 4, 5, 6, 7, 8]
 
 class Node(object):
     def __init__(self, state, parent, depth):
@@ -77,28 +121,26 @@ class Node(object):
 
 def BFS(spider_state, ant_state):
     # set true when final state is true
+    count = 0
     goal = False
-    node = Node(spider_state, None, 0)
+    starting_node = Node(spider_state, None, 0)
     # get the initial state
-    node_list = [node]
+    node_list = [starting_node]
+    initial_ant_state = ant_state
     # while the goal has not been reached and the nodelist isnt empty
     while goal == False or len(node_list) == 0:
         # take the first element from the node list
         e = node_list.pop(0)
-        # check every option 
+        ant_state = initial_ant_state
         for i in range(0, e.depth):
             ant_state = handle_ant_movement(border_choice, ant_state)
-        for key in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]:
-            # increment the move counter
-            # use the helper function to get the next move for the spider
-            next_node = Node(None, None, None)
-            next_node.state = get_next_move(e.state, key)
-            next_node.parent = e
-            next_node.depth = e.depth + 1
-            # get the next move for the ant
+        for move in POSSIBLE_MOVES:
+            # create a node for the next value
+            next_node = Node(get_next_move(deepcopy(e.state), move), e, e.depth + 1)
             # if the ant and spider are the same (coordinates) the goal has been reached
             if next_node.state == ant_state:
                 goal = True
+                break;
             else:
                 # append this state to the back of the list
                 node_list.append(next_node)
