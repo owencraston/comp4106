@@ -2,27 +2,50 @@ import curses
 from random import randint
 from copy import deepcopy
 
-height = 15
+height = 10
 width = 15
+
+
+"""
+[0, 0]----------------------[0, 15]
+|                               |
+|                               |    
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+[10, 0]----------------------[10, 15]
+"""
 
 # init game
 screen = curses.initscr()
 curses.curs_set(0)
 score = 0
-x, y = 0, 0
+x, y = 10, 10
 w = curses.newwin(height, width, x, y)
 w.keypad(1)
 w.border(0)
 w.nodelay(1)
+
+# logic for the game
 def spawn_ant(border_choice):
     if (border_choice >= 0 and border_choice <= 3):    
         border = {
-            0: [randint(0, width), 0],
-            1: [0, randint(0, height)],
-            2: [randint(0, width), height-1],
-            3: [width-1, randint(0, height)],
+            0: [randint(1, height-1), 0],
+            1: [0, randint(1, width-1)],
+            2: [randint(1, height-1), height-1],
+            3: [height-1, randint(1, width-1)],
         }
-        return border.get(border_choice, [randint(0, width), 0])
+        return border.get(border_choice, [randint(1, width-1), 1])
     else:
         raise ValueError('border_choice must be an int value between 0-3.' + border_choice + ' was found')
 
@@ -42,11 +65,11 @@ def spider_bounds(spd):
     # if the spider goes out of bounds, it comes out the other side
     if spd[0] >= width:
         spd[0] = 1
-    if spd[0] < 0:
+    if spd[0] <= 0:
         spd[0] = width-1
     if spd[1] >= height:
         spd[1] = 1
-    if spd[1] < 0:
+    if spd[1] <= 0:
         spd[1] = height-1
     return spd
 
@@ -105,7 +128,8 @@ def get_next_spider_move(spidy, move):
         if move == 8:
             spidy[1] -= 1
             spidy[0] -= 1
-
+        # check again if the value is out of bounds
+        spidy = spider_bounds(spidy)
         return spidy
     else:
         raise ValueError('spidy must contain an x and y position. %s',  spidy, ' was found')
@@ -123,7 +147,7 @@ spider = [5, 5]
 border_choice = randint(0,3)
 ant = spawn_ant(border_choice)
 
-# draw the objects
+# draw the initial objects
 w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
 w.addch(spider[0], spider[1], curses.ACS_PI)
 
@@ -149,41 +173,16 @@ def BFS(spider_state, ant_state):
             next_node.state = get_next_spider_move(deepcopy(e.state), move)
             next_node.parent = e
             next_node.depth = e.depth + 1
-            # print(future_ant_state)
             if next_node.state == future_ant_state:
                 goal = True
-                print('you win')
                 break
             else:
                 node_list.append(next_node)
     return node_list
 
-
 path = BFS(spider, ant)
-print(path)
 
 while w.getch() != 27:
-    w.timeout(50)
-    w.border(0)
-    w.addstr(0, 2, 'Score : ' + str(score) + ' ')
-
-    if len(path) != 0:
-        # remove the previous spider
-        w.addch(spider[0], spider[1], ' ')
-        # remove the previous ant
-        w.addch(ant[0], ant[1], ' ')
-        # move accordingly
-        spider = path.pop(0).state
-
-    # check if the spider eats the ant 
-    if spider == ant:
-        score += 1
-        border_choice = randint(0,3)
-        ant = spawn_ant(border_choice)
-
-    # draw ant again
-    w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
-     # draw spider again
-    w.addch(spider[0], spider[1], curses.ACS_PI)
+    w.timeout(150)
             
             
