@@ -78,13 +78,13 @@ def get_next_ant_move(direction, a):
         # check if the ant is out of bounds
         a = ant_bounds(a)
         if direction == 0:
-            ant[1] += 1
+            a[1] += 1
         if direction == 1:
-            ant[0] += 1
+            a[0] += 1
         if direction == 2:
-            ant[1] -=1
+            a[1] -=1
         if direction == 3:
-            ant[0] -= 1
+            a[0] -= 1
         # check again
         a = ant_bounds(a)
         return a
@@ -144,8 +144,8 @@ class Node():
         self.depth = depth
 
 spider = [5, 5]
-border_choice = randint(0,3)
-ant = spawn_ant(border_choice)
+border_choice = 0
+ant = [6, 1]
 
 # draw the initial objects
 w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
@@ -180,9 +180,37 @@ def BFS(spider_state, ant_state):
                 node_list.append(next_node)
     return node_list
 
-path = BFS(spider, ant)
+initial_spider_state = deepcopy(spider)
+initial_ant_state = deepcopy(ant)
+
+path = BFS([5, 5], [6, 1])
 
 while w.getch() != 27:
-    w.timeout(150)
-            
+    w.timeout(50)
+    w.border(0)
+    w.addstr(0, 2, 'Score : ' + str(score) + ' ')
+
+    ant = get_next_ant_move(border_choice, ant)
+
+    if len(path) != 0:
+        # remove the previous spider
+        w.addch(spider[0], spider[1], ' ')
+        # remove the previous ant
+        w.addch(ant[0], ant[1], ' ')
+        # move accordingly
+        spider = path.pop(0).states
+        
+
+    # check if the spider eats the ant 
+    if spider == ant:
+        score += 1
+        border_choice = randint(0,3)
+        ant = spawn_ant(border_choice)
+
+    # draw ant again
+    w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
+     # draw spider again
+    w.addch(spider[0], spider[1], curses.ACS_PI)
+
+     
             
