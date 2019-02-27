@@ -2,8 +2,9 @@ import curses
 from random import randint
 from copy import deepcopy
 
-height = 10
-width = 15
+height = 25
+width = 35
+
 
 
 """
@@ -180,7 +181,6 @@ w.addch(spider[0], spider[1], curses.ACS_PI)
 
 def BFS(spider_state, ant_state):
     goal = False
-    count = 0
     initial_node = Node(spider_state, None, 1)
     node_list = [initial_node]
     initial_ant_state = ant_state
@@ -195,7 +195,6 @@ def BFS(spider_state, ant_state):
         for i in range(0, e.depth):
             future_ant_state = get_next_ant_move(border_choice, initial_ant_state)
         for move in POSSIBLE_MOVES:
-            count += 1
             next_node = Node(None, None, None)
             next_node.state = get_next_spider_move(deepcopy(e.state), move)
             next_node.parent = e
@@ -207,22 +206,29 @@ def BFS(spider_state, ant_state):
                 node_list.append(next_node)
     return node_list
 
-initial_spider_state = deepcopy(spider)
-initial_ant_state = deepcopy(ant)
 
-path = BFS(initial_spider_state, initial_ant_state)
+def new_path(initial_spider_state, initial_ant_state):
+    nodes = BFS(initial_spider_state, initial_ant_state)
+    path = []
+    parent = nodes[-1]
+    while parent:
+        path.insert(0, parent)
+        parent = parent.parent
+    return path
 
+correct_path = new_path(deepcopy(spider), deepcopy(ant))
+    
 while w.getch() != 27:
     w.clear()
     w.refresh()
     w.timeout(50)
     w.border(0)
     w.addstr(0, 1, 'Score: ' + str(score) + ' ')
-    w.addstr(0, 10, str(len(path)) + ' ')
+    w.addstr(0, 10, str(len(correct_path)) + ' ')
 
-    if len(path) > 0:
+    if len(correct_path) > 0:
         # get next value in the path
-        next_spider_state = path.pop(0)
+        next_spider_state = correct_path.pop(0)
         spider = next_spider_state.state
         # draw spider
         w.addch(spider[0], spider[1], curses.ACS_PI)
@@ -231,19 +237,6 @@ while w.getch() != 27:
         # draw ant
         w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
     else:
-        # increment the score
-        score += 1
-        # change the border choice
-        border_choice = randint(0,3)
-        # generate a new ant position
-        ant = spawn_ant(border_choice)
-        # generate a new spider
-        spider = [randint(1, height-2), randint(1, width-2)]
-        # get the path for the spider to eat the ant with the new coordinates
-        path = BFS(initial_spider_state, initial_ant_state)
-
+        curses.endwin()
 
 curses.endwin()
-
-     
-            

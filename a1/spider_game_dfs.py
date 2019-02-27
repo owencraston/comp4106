@@ -1,56 +1,117 @@
+import curses
 from random import randint
 from copy import deepcopy
 
-height = 15
-width = 15
+height = 25
+width = 35
+
+
+"""
+[0, 0]----------------------[0, 15]
+|                               |
+|                               |    
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+|                               |
+[10, 0]----------------------[10, 15]
+"""
+
+# init game
+screen = curses.initscr()
+curses.curs_set(0)
+score = 0
+x, y = 10, 10
+w = curses.newwin(height, width, x, y)
+w.keypad(1)
+w.border(0)
+w.nodelay(1)
+
+# logic for the game
 def spawn_ant(border_choice):
     if (border_choice >= 0 and border_choice <= 3):    
         border = {
-            0: [randint(0, width), 0],
-            1: [0, randint(0, height)],
-            2: [randint(0, width), height-1],
-            3: [width-1, randint(0, height)],
+            0: [randint(1, height-2), 1],
+            1: [1, randint(1, width-2)],
+            2: [randint(1, height-2), height-2],
+            3: [height-2, randint(1, width-2)],
         }
-        return border.get(border_choice, [randint(0, width), 0])
+        return border.get(border_choice, [randint(1, width-1), 1])
     else:
         raise ValueError('border_choice must be an int value between 0-3.' + border_choice + ' was found')
 
 def ant_bounds(a):
     # if the ant goes out of bounds 
-    if a[0] >= width:
-        a = spawn_ant(randint(0,3))
-    if a[0] < 0:
-        a = spawn_ant(randint(0,3))
-    if a[1] >= height:
-        a = spawn_ant(randint(0,3))
-    if ant[1] < 0:
-        a = spawn_ant(randint(0,3))
+    if a[0] >= height-1:
+        a = spawn_ant(border_choice)
+    if a[0] <= 0:
+        a = spawn_ant(border_choice)
+    if a[1] >= width-1:
+        a = spawn_ant(border_choice)
+    if ant[1] <= 0:
+        a = spawn_ant(border_choice)
     return a
 
 def spider_bounds(spd):
     # if the spider goes out of bounds, it comes out the other side
-    if spd[0] >= width:
+    if spd[0] >= height:
         spd[0] = 1
-    if spd[0] < 0:
-        spd[0] = width-1
-    if spd[1] >= height:
+    if spd[0] <= 0:
+        spd[0] = height-1
+    if spd[1] >= width:
         spd[1] = 1
-    if spd[1] < 0:
-        spd[1] = height-1
+    if spd[1] <= 0:
+        spd[1] = width-1
     return spd
+
+
+def check_spider_bounds(spd):
+    out_of_bounds = False
+    # if the spider goes out of bounds, it comes out the other side
+    if spd[0] >= height:
+        out_of_bounds = True
+    if spd[0] <= 0:
+        out_of_bounds = True
+    if spd[1] >= width:
+        out_of_bounds = True
+    if spd[1] <= 0:
+        out_of_bounds = True
+    return out_of_bounds
+
+def check_ant_bounds(a):
+    # if the ant goes out of bounds
+    out_of_bounds = False
+    if a[0] >= height:
+        aout_of_bounds = True
+    if a[0] <= 0:
+        out_of_bounds = True
+    if a[1] >= width:
+        out_of_bounds = True
+    if ant[1] <= 0:
+        out_of_bounds = True
+    return out_of_bounds
 
 def get_next_ant_move(direction, a):
     if a:
         # check if the ant is out of bounds
         a = ant_bounds(a)
         if direction == 0:
-            ant[1] += 1
+            a[1] += 1
         if direction == 1:
-            ant[0] += 1
+            a[0] += 1
         if direction == 2:
-            ant[1] -=1
+            a[1] -=1
         if direction == 3:
-            ant[0] -= 1
+            a[0] -= 1
         # check again
         a = ant_bounds(a)
         return a
@@ -94,7 +155,8 @@ def get_next_spider_move(spidy, move):
         if move == 8:
             spidy[1] -= 1
             spidy[0] -= 1
-
+        # check again if the value is out of bounds
+        spidy = spider_bounds(spidy)
         return spidy
     else:
         raise ValueError('spidy must contain an x and y position. %s',  spidy, ' was found')
@@ -108,44 +170,84 @@ class Node():
         self.parent = parent
         self.depth = depth
 
-spider = [randint(1,width - 1), randint(1, height - 1)]
-ant = [randint(1,width - 1), randint(1, height - 1)]
-border_choice = randint(0,3)
+    def __eq__(self, other):
+        """Override the default Equals behavior"""
+        return self.state == other.state and self.parent == other.parent and self.depth == other.depth
+
+
+spider = [5, 5]
+border_choice = 0
+ant = [3, 7]
 
 def DFS(spider_state, ant_state):
+    # set a goal bool to false
     goal = False
-    count = 0
+    # put the starting states into node objects
     initial_node = Node(spider_state, None, 1)
+    # create a list nodes
     node_list = [initial_node]
-    max_depth = 1
-    current_depth = 1
     initial_ant_state = ant_state
-
+    # create a list of states that will store our visited state
+    visited = []
     # check if the first two states math
     if spider_state == ant_state:
         goal = True
         return node_list
-    while goal == False and len(node_list) != 0:
-        future_ant_state = initial_ant_state
-        future_ant_state = get_next_ant_move(border_choice, initial_ant_state)
 
-        for j in range(0, 8):
-            for i in range(current_depth, max_depth):
+    while goal == False and len(node_list) != 0:
+        e = node_list.pop(0)
+        visited.append(e.state)
+        future_ant_state = initial_ant_state
+        for i in range(0, e.depth):
+            future_ant_state = get_next_ant_move(border_choice, initial_ant_state)
+        for move in POSSIBLE_MOVES:
+            next_state = get_next_spider_move(deepcopy(e.state), move)
+            if next_state not in visited:
                 next_node = Node(None, None, None)
-                next_node.state = get_next_spider_move(deepcopy(e.state), move)
+                next_node.state = next_state
                 next_node.parent = e
                 next_node.depth = e.depth + 1
-
                 if next_node.state == future_ant_state:
                     goal = True
-                    print('you win')
                     break
                 else:
-                    node_list.append(next_node)
+                    node_list.insert(0, next_node)
     return node_list
 
+def new_path(initial_spider_state, initial_ant_state):
+    nodes = DFS(initial_spider_state, initial_ant_state)
+    path = []
+    parent = nodes[-1]
+    while parent:
+        path.insert(0, parent)
+        parent = parent.parent
+    return path
 
-path = DFS(spider, ant)
-print(path)
-            
+correct_path = new_path(deepcopy(spider), deepcopy(ant))
+    
+while w.getch() != 27:
+    w.clear()
+    w.refresh()
+    w.timeout(50)
+    w.border(0)
+    w.addstr(0, 1, 'Score: ' + str(score) + ' ')
+    w.addstr(0, 10, str(len(correct_path)) + ' ')
+
+    if len(correct_path) > 0:
+        # get next value in the path
+        next_spider_state = correct_path.pop(0)
+        spider = next_spider_state.state
+        # draw spider
+        w.addch(spider[0], spider[1], curses.ACS_PI)
+        # get next position of ant
+        ant = get_next_ant_move(border_choice, ant)  
+        # draw ant
+        w.addch(ant[0], ant[1], curses.ACS_DIAMOND)
+    else:
+        curses.endwin()
+
+curses.endwin()
+
+
+     
             
