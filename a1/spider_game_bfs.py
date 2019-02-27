@@ -221,7 +221,7 @@ correct_path = new_path(deepcopy(spider), deepcopy(ant))
 while w.getch() != 27:
     w.clear()
     w.refresh()
-    w.timeout(50)
+    w.timeout(200)
     w.border(0)
     w.addstr(0, 1, 'Score: ' + str(score) + ' ')
     w.addstr(0, 10, str(len(correct_path)) + ' ')
