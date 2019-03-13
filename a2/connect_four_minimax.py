@@ -65,56 +65,46 @@ def winning_move(board, piece):
 			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
 				return True
 
-def evaluate_window(window, piece):
+def get_score_for_row(window, piece):
 	opp_piece = PLAYER_PIECE
 	if piece == opp_piece:
 		opp_piece = AI_PIECE
-
 	score = 0
 	# 3 in a row
 	if window.count(piece) == 3 and window.count(EMPTY) == 1:
 		score += 5
 	elif window.count(piece) == 2 and window.count(EMPTY) == 2:
 		score += 2
-	
-
-	# opponent
-	# we think the opponent getting 3 in a row is worse
-	elif window.count(opp_piece) == 3 and window.count(EMPTY) == 1:
-		score -= 4
 	return score
 
-def score_position(board, piece):
+def get_score(board, piece):
 	score = 0
 	# score center pieces favourably
 	center_array = [int(i) for i in list(board[:, COLUMN_COUNT//2])]
 	center_count = center_array.count(piece)
 	score += center_count * 3
-
-	# horizontal 4 in a rows
+	# horizontal
 	for r in range(ROW_COUNT):
 		row_array = [int(i) for i in list(board[r, :])]
 		for c in range(COLUMN_COUNT-3):
 			window = row_array[c:c+WINDOW_LENGTH]
-			score += evaluate_window(window, piece)
-		
+			score += get_score_for_row(window, piece)
 	# score vertical
 	for c in range(COLUMN_COUNT):
 		col_array = [int(i) for i in list(board[:, c])]
 		for r in range(ROW_COUNT-3):
 			window = col_array[r:r+WINDOW_LENGTH]
-			score += evaluate_window(window, piece)
-	
+			score += get_score_for_row(window, piece)
 	# positive slope diagonal
 	for r in range(ROW_COUNT-3):
 		for c in range(COLUMN_COUNT-3):
 			window = [board[r+i][c+i] for i in range(WINDOW_LENGTH)]
-			score += evaluate_window(window, piece)
+			score += get_score_for_row(window, piece)
 	# negative slope diagonal
 	for r in range(ROW_COUNT-3):
 		for c in range(COLUMN_COUNT-3):
 			window = [board[r+3-i][c+i] for i in range(WINDOW_LENGTH)]
-			score += evaluate_window(window, piece)
+			score += get_score_for_row(window, piece)
 
 	return score
 
@@ -134,7 +124,7 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
 			else: # Game is over, no more valid moves
 				return (None, 0)
 		else: # Depth is zero
-			return (None, score_position(board, AI_PIECE))
+			return (None, get_score(board, AI_PIECE))
 	if maximizingPlayer:
 		value = -math.inf
 		column = random.choice(valid_locations)
