@@ -65,44 +65,44 @@ def winning_move(board, piece):
 			if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
 				return True
 
-def get_score_for_row(window, piece):
-	opp_piece = PLAYER_PIECE
-	if piece == opp_piece:
-		opp_piece = AI_PIECE
-	score = 0
-	# 3 in a row
-	if window.count(piece) == 3 and window.count(EMPTY) == 1:
-		score += 5
-	elif window.count(piece) == 2 and window.count(EMPTY) == 2:
-		score += 2
-	return score
-
 def get_score(board, piece):
-	score = 0
-	# horizontal
-	for r in range(ROW_COUNT):
-		row_array = [int(i) for i in list(board[r, :])]
-		for c in range(COLUMN_COUNT-3):
-			window = row_array[c:c+WINDOW_LENGTH]
-			score += get_score_for_row(window, piece)
-	# score vertical
-	for c in range(COLUMN_COUNT):
-		col_array = [int(i) for i in list(board[:, c])]
-		for r in range(ROW_COUNT-3):
-			window = col_array[r:r+WINDOW_LENGTH]
-			score += get_score_for_row(window, piece)
-	# positive slope diagonal
-	for r in range(ROW_COUNT-3):
-		for c in range(COLUMN_COUNT-3):
-			window = [board[r+i][c+i] for i in range(WINDOW_LENGTH)]
-			score += get_score_for_row(window, piece)
-	# negative slope diagonal
-	for r in range(ROW_COUNT-3):
-		for c in range(COLUMN_COUNT-3):
-			window = [board[r+3-i][c+i] for i in range(WINDOW_LENGTH)]
-			score += get_score_for_row(window, piece)
+    score = 0
+    # score center pieces favourably
+    center_array = [int(i) for i in list(board[:, COLUMN_COUNT//2])]
+    center_count = center_array.count(piece)
+    score += center_count * 10
 
-	return score
+    # center -1
+    left_center_array = [int(i) for i in list(board[:, (COLUMN_COUNT//2)-1])]
+    left_center_count = left_center_array.count(piece)
+    score += left_center_count * 8
+
+    # center + 1
+    right_center_array = [int(i) for i in list(board[:, (COLUMN_COUNT//2)+1])]
+    right_center_count = right_center_array.count(piece)
+    score += right_center_count * 8
+
+    # center -2
+    far_left_center_array = [int(i) for i in list(board[:, (COLUMN_COUNT//2)-2])]
+    far_left_center_count = far_left_center_array.count(piece)
+    score += far_left_center_count * 6
+
+    # center + 2
+    far_right_center_array = [int(i) for i in list(board[:, (COLUMN_COUNT//2)+2])]
+    far_right_center_count = far_right_center_array.count(piece)
+    score += far_right_center_count * 6
+
+    # center -3
+    farthest_left_center_array = [int(i) for i in list(board[:, (COLUMN_COUNT//2)-3])]
+    farthest_left_center_count = farthest_left_center_array.count(piece)
+    score += farthest_left_center_count * 4
+
+     # center +3
+    farthest_right_center_array = [int(i) for i in list(board[:, (COLUMN_COUNT//2)+3])]
+    farthest_right_center_count = farthest_right_center_array.count(piece)
+    score += farthest_right_center_count * 4
+
+    return score
 
 
 def is_terminal_node(board):
