@@ -1,5 +1,6 @@
 import numpy
 from random import randint
+from math import inf as infinity
 
 # set a turn counter
 turn = 1
@@ -18,6 +19,14 @@ def is_game_over(response):
         return False
     else:
         return True
+
+def _has_tile_in_column(board, column):
+    for i in range(ROW_COUNT):
+        if board.item(i, column) != 0:
+            # return x position
+            return i
+    # return -1 if that column in empty
+    return -1
 
 def random_move(board_state):
     y_pos = randint(0, COLUMN_COUNT-1)
@@ -52,7 +61,6 @@ def _four_in_a_row_vert(board_state, player):
                 return True
     return False
 
-
 def _four_in_a_row_diag(board_state, player):
     # numpy way of getting list of diagonal rows
     # gett the diags from top left to bottom right
@@ -81,16 +89,68 @@ def has_won(board_state, player):
     if _four_in_a_row_diag(board_state, player) == True:
         return True
     return False
-    
-     
 
-def _has_tile_in_column(board, column):
-    for i in range(ROW_COUNT):
-        if board.item(i, column) != 0:
-            # return x position
-            return i
-    # return -1 if that column in empty
-    return -1
+def __in_the_middle_horz(board_state, player):
+    score = 0
+    count = 0
+    for row in range(ROW_COUNT):
+        for col in range(COLUMN_COUNT):
+            if board_state.item(row, col) == player:
+                count += 1
+            else:
+                count = 0
+            if count == 3:
+                score +=1
+    return score
+
+def __in_the_middle_vert(board_state, player):
+    score = 0
+    count = 0
+    for col in range(COLUMN_COUNT):
+        for row in range(ROW_COUNT):
+            if board_state.item(row, col) == player:
+                count += 1
+            else:
+                count = 0
+            if count == 3:
+                score += 1
+    return score
+
+def __in_the_middle_diag(board_state, player):
+    score = 0
+    # numpy way of getting list of diagonal rows
+    # gett the diags from top left to bottom right
+    diags = [board_state[::-1,:].diagonal(i) for i in range(-board_state.shape[0]+1, board_state.shape[1])]
+    # get diags from top right to bottom left
+    diags.extend(board_state.diagonal(i) for i in range(board_state.shape[1]-1,-board_state.shape[0],-1))
+    # for the arrays of diagonals in the list...
+    for diag in diags:
+        # reset count for each one
+        count = 0
+        # run through the array
+        for i in range(len(diag)):
+            if diag.item(i) == player:
+                count += 1
+            else:
+                count = 0
+            if count == 3:
+                score += 1
+    return score
+
+def _heuristic1(board_state, player):
+    """
+    we want to reward the player for having a piece in the middle of two other pieces.
+    this is basically checking if there are 3 in a row of a certain players pieces
+    """
+    score = 0
+    score += __in_the_middle_vert(board_state, player)
+    score += __in_the_middle_horz(board_state, player)
+    score += __in_the_middle_diag(board_state, player)
+    return score
+
+def minimax(board_state, depth, player):
+    return []
+    
 
 board = draw_board()
 while not game_over:
