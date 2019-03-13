@@ -79,18 +79,63 @@ def draw_board(board):
 				pygame.draw.circle(screen, YELLOW, (int(c*SQUARESIZE+SQUARESIZE/2), height-int(r*SQUARESIZE+SQUARESIZE/2)), RADIUS)
 	pygame.display.update()
 
-def score_position(board, piece):
-	# horizontal 4 in a rows
+def evaluate_window(window, piece):
+	opp_piece = PLAYER_PIECE
+	if piece == opp_piece:
+		opp_piece = AI_PIECE
+
 	score = 0
+	# winning move
+	if window.count(piece) == 4:
+		score += 100
+	# 3 in a row
+	elif window.count(piece) == 3 and window.count(EMPTY) == 1:
+		score += 10
+	elif window.count(piece) == 2 and window.count(EMPTY) == 2:
+		score += 5
+	
+
+	# opponent
+	# we think the opponent getting 3 in a row is worse
+	elif window.count(opp_piece) == 3 and window.count(EMPTY) == 1:
+		score -= 80
+	return score
+
+
+
+
+def score_position(board, piece):
+	score = 0
+	# score center pieces favourably
+	center_array = [int(i) for i in list(board[:, COLUMN_COUNT//2])]
+	center_count = center_array.count(piece)
+	score += center_count * 6
+
+	# horizontal 4 in a rows
 	for r in range(ROW_COUNT):
 		row_array = [int(i) for i in list(board[r, :])]
 		for c in range(COLUMN_COUNT-3):
 			window = row_array[c:c+WINDOW_LENGTH]
-			# winning move
-			if window.count(piece) == 4:
-				score += 100
-			elif window.count(piece) == 3 and window.count(EMPTY) == 1:
-				score += 10
+			score += evaluate_window(window, piece)
+		
+	# score vertical
+	for c in range(COLUMN_COUNT):
+		col_array = [int(i) for i in list(board[:, c])]
+		for r in range(ROW_COUNT-3):
+			window = col_array[r:r+WINDOW_LENGTH]
+			score += evaluate_window(window, piece)
+	
+	# positive slope diagonal
+	for r in range(ROW_COUNT-3):
+		for c in range(COLUMN_COUNT-3):
+			window = [board[r+i][c+i] for i in range(WINDOW_LENGTH)]
+			score += evaluate_window(window, piece)
+	# negative slope diagonal
+	for r in range(ROW_COUNT-3):
+		for c in range(COLUMN_COUNT-3):
+			window = [board[r+3-i][c+i] for i in range(WINDOW_LENGTH)]
+			score += evaluate_window(window, piece)
+
 	return score
 
 def get_valid_locations(board):
@@ -101,7 +146,7 @@ def get_valid_locations(board):
 	return valid_locations
 
 def pick_best_move(board, piece):
-	best_score = 0
+	best_score = -1000
 	valid_locations = get_valid_locations(board)
 	best_column = random.choice(valid_locations)
 	for col in valid_locations:
