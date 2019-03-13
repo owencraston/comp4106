@@ -28,7 +28,7 @@ def random_move(board_state):
         move = [column_state-1, y_pos]
     return move
 
-def _four_in_a_row_h(board_state, player):
+def _four_in_a_row_horz(board_state, player):
     count = 0
     for row in range(ROW_COUNT):
         for col in range(COLUMN_COUNT):
@@ -40,7 +40,7 @@ def _four_in_a_row_h(board_state, player):
                 return True
     return False
 
-def _four_in_a_row_v(board_state, player):
+def _four_in_a_row_vert(board_state, player):
     count = 0
     for col in range(COLUMN_COUNT):
         for row in range(ROW_COUNT):
@@ -53,11 +53,34 @@ def _four_in_a_row_v(board_state, player):
     return False
 
 
+def _four_in_a_row_diag(board_state, player):
+    # numpy way of getting list of diagonal rows
+    # gett the diags from top left to bottom right
+    diags = [board_state[::-1,:].diagonal(i) for i in range(-board_state.shape[0]+1, board_state.shape[1])]
+    # get diags from top right to bottom left
+    diags.extend(board_state.diagonal(i) for i in range(board_state.shape[1]-1,-board_state.shape[0],-1))
+    # for the arrays of diagonals in the list...
+    for diag in diags:
+        # reset count for each one
+        count = 0
+        # run through the array
+        for i in range(len(diag)):
+            if diag.item(i) == player:
+                count += 1
+            else:
+                count = 0
+            if count == 4:
+                return True
+    return False
+
 def has_won(board_state, player):
-    if _four_in_a_row_h(board_state, player) == True:
+    if _four_in_a_row_horz(board_state, player) == True:
         return True
-    if _four_in_a_row_v(board_state, player) == True:
+    if _four_in_a_row_vert(board_state, player) == True:
         return True
+    if _four_in_a_row_diag(board_state, player) == True:
+        return True
+    return False
     
      
 
