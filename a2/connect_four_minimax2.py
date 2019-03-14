@@ -168,11 +168,11 @@ def new_turn(turn):
 board = create_board()
 game_over = False
 turn = 0
-
+count = 0
 
 while not game_over:
     # initial load
-    if turn == 0:
+    if count == 0:
         print("Welcome to connect four. Connect four of your pieces in a row to win.")
         print("Board size: ", str(ROW_COUNT) + " x " + str(COLUMN_COUNT))
         print("Random Player: ", PLAYER_PIECE)
@@ -193,7 +193,7 @@ while not game_over:
             turn = new_turn(turn)
     # ai player
     elif turn == AI and not game_over:				
-        col, minimax_score = minimax(board, 4, -math.inf, math.inf, True)
+        col, minimax_score = minimax(board, 6, -math.inf, math.inf, True)
         if is_valid_location(board, col):
             row = get_next_open_row(board, col)
             print("Ai plays at ", [row, col])
@@ -204,6 +204,7 @@ while not game_over:
             turn = new_turn(turn)
     # print the baord state after the moves
     print_board(board)
+    count += 1
     if game_over == False:
         # check if the player wants to keep playing
         res = input("Continue plaiyng? Type 1 for yes and anything else to quit. ")

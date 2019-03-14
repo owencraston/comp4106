@@ -114,9 +114,9 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
 	if depth == 0 or is_terminal:
 		if is_terminal:
 			if winning_move(board, AI_PIECE):
-				return (None, 100000000000000)
+				return (None, math.inf)
 			elif winning_move(board, PLAYER_PIECE):
-				return (None, -10000000000000)
+				return (None, -math.inf)
 			else: # Game is over, no more valid moves
 				return (None, 0)
 		else: # Depth is zero
@@ -124,17 +124,24 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
 	if maximizingPlayer:
 		value = -math.inf
 		column = random.choice(valid_locations)
-		for col in valid_locations:
-			row = get_next_open_row(board, col)
-			b_copy = board.copy()
-			drop_piece(b_copy, row, col, AI_PIECE)
-			new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
-			if new_score > value:
-				value = new_score
-				column = col
-			alpha = max(alpha, value)
-			if alpha >= beta:
-				break
+		for col in range(valid_locations + 1):
+            if col > valid_locations:
+                for i in valid_locations:
+                    b_copy = board.copy()
+                    drop_from_bottom(b_copy, col)
+                    new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
+            else:
+                row = get_next_open_row(board, col)
+                b_copy = board.copy()
+                drop_piece(b_copy, row, col, AI_PIECE)
+                new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
+            
+            if new_score > value:
+                value = new_score
+                column = col
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
 		return column, value
 
 	else: # Minimizing player
@@ -165,10 +172,27 @@ def new_turn(turn):
     turn = turn % 2
     return turn
 
+def drop_first(board):
+    for col in range(COLUMN_COUNT):
+        if board.item(0, col) != 0:
+            drop_from_bottom(board, col)
+            return [0, col]
+        
+
+def drop_from_bottom(board, col):
+    if board.item(0, col) != 0:
+        for r in range(ROW_COUNT-2):
+            if r == ROW_COUNT-1:
+                board[r][col] = 0
+            else:
+                board[r][col] = board[r+1][col]
+
+
 board = create_board()
 game_over = False
 turn = 0
 count = 0
+
 
 while not game_over:
     # initial load
@@ -182,8 +206,16 @@ while not game_over:
     # random player
     if turn == RANDOM_PLAYER:
         print("turn 1")
-        col = random.randint(0, COLUMN_COUNT-1)
-        if is_valid_location(board, col):
+        # if the random value is out of bouds then drop a piece off the bottom
+        if count != 0:
+            col = random.randint(0, COLUMN_COUNT)
+        else:
+            col = random.randint(0, COLUMN_COUNT-1)
+
+        if col == COLUMN_COUNT:
+            drop = drop_first(board)
+            print("dropped", drop)
+        elif is_valid_location(board, col):
             row = get_next_open_row(board, col)
             print("Random player plays at", [row, col])
             drop_piece(board, row, col, PLAYER_PIECE)
@@ -191,6 +223,8 @@ while not game_over:
                 print("Player 1 wins. Game over")
                 game_over = True
             turn = new_turn(turn)
+
+            
     # ai player
     elif turn == AI and not game_over:				
         col, minimax_score = minimax(board, 4, -math.inf, math.inf, True)
