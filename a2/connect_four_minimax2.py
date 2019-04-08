@@ -15,6 +15,7 @@ AI_PIECE = 2
 WINDOW_LENGTH = 4
 
 EMPTY = 0
+node_count = 0
 
 def is_game_over(response):
     if response == 1:
@@ -109,6 +110,8 @@ def is_terminal_node(board):
 	return winning_move(board, PLAYER_PIECE) or winning_move(board, AI_PIECE) or len(get_valid_locations(board)) == 0
 
 def minimax(board, depth, alpha, beta, maximizingPlayer):
+	global node_count
+	node_count += 1
 	valid_locations = get_valid_locations(board)
 	is_terminal = is_terminal_node(board)
 	if depth == 0 or is_terminal:
@@ -193,7 +196,7 @@ while not game_over:
             turn = new_turn(turn)
     # ai player
     elif turn == AI and not game_over:				
-        col, minimax_score = minimax(board, 6, -math.inf, math.inf, True)
+        col, minimax_score = minimax(board, 4, -math.inf, math.inf, True)
         if is_valid_location(board, col):
             row = get_next_open_row(board, col)
             print("Ai plays at ", [row, col])
@@ -205,6 +208,7 @@ while not game_over:
     # print the baord state after the moves
     print_board(board)
     count += 1
+    print("node count", node_count)
     if game_over == False:
         # check if the player wants to keep playing
         res = input("Continue plaiyng? Type 1 for yes and anything else to quit. ")
