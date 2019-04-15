@@ -1,0 +1,64 @@
+{
+  "courses": [
+    {
+      "subject": "COMP 1501",
+      "crn": 11057,
+      "title": "Intro to Computer Game Design",
+      "description": "Introduction to developing mobile applications using the Mac OS X platform. Topics include: the Objective-C programming language; development tools; framework API's; and the Quartz graphic system. Extensive practical experience with development for Apple mobile devices such as the iPhone.",
+      "prerequisites": "one of COMP 1405, COMP 1005, SYSC 1005, ECOR 1606",
+      "credit": 0.5,
+      "instructor": "LD Nel",
+      "start_date": "Jan 07, 2019",
+      "end_date": "Apr 09, 2019",
+      "days": "Tue, Thu",
+      "time": "11:35,13:25",
+      "building": "Canal Building",
+      "room": 2202
+    }, 
+    {
+      "subject": "COMP 2401",
+      "crn": 11069,
+      "title": "Introduction to Systems Programming",
+      "description": "Introduction to system-level programming with fundamental OS concepts, procedures, primitive data types, user-defined types. Topics may include process management, memory management, process coordination and synchronization, inter-process communication, file systems, networking, pointers, heap and stack memory management, and system/library calls. Precludes additional credit for COMP 1002 (no longer offered), COMP 1402 (no longer offered), COMP 2001 (no longer offered), SYSC 2006.",
+      "prerequisites": "one of COMP 1406, COMP 1006 or SYSC 2004, with a minimum grade of C-",
+      "credit": 0.5,
+      "instructor": "Mark Lanthier",
+      "start_date": "Jan 07, 2019",
+      "end_date": "Apr 09, 2019",
+      "days": "Wed, Fri",
+      "time": "16:05,17:25",
+      "building": "Azrieli Theatre",
+      "room": 301
+    },
+    {
+      "subject": "COMP 2402 B",
+      "crn": 11073,
+      "title": "Abstract Data Types and Algorithms",
+      "description": "Introduction to the design and implementation of abstract data types and to complexity analysis of data structures. Topics include: stacks, queues, lists, trees and graphs. Special attention is given to abstraction, interface specification and hierarchical design using an object-oriented programming language.",
+      "prerequisites": "one of COMP 1406, COMP 1006, SYSC 2004, with a minimum grade of C-.",
+      "credit": 0.5,
+      "instructor": "Patrick Morin",
+      "start_date": "Jan 07, 2019",
+      "end_date": "Apr 09, 2019",
+      "days": "Tue, Thu",
+      "time": "13:05,14:25",
+      "building": "Health Science Building",
+      "room": 1301
+    },
+    {
+      "subject": "COMP 2406 A",
+      "crn": 11081,
+      "title": "Fundamentals of Web Applications",
+      "description": "Introduction to Internet application development; emphasis on computer science fundamentals of technologies underlying web applications. Topics include: scripting and functional languages, language-based virtual machines, database query languages, remote procedure calls over the Internet, and performance and security concerns in modern distributed applications.",
+      "prerequisites": "one of COMP 1006, COMP 1406, SYSC 2004, with a minimum grade of C-",
+      "credit": 0.5,
+      "instructor": "LD Nel",
+      "start_date": "Jan 07, 2019",
+      "end_date": "Apr 09, 2019",
+      "days": "Tue, Thu",
+      "time": "10:05,11:25",
+      "building": "Health Science Building",
+      "room": 1301
+    }
+  ]
+}
