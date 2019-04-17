@@ -23,6 +23,3 @@ def print_combos(cmb):
     for c in cmb:
         for crs in c:
             crs.print_course()
-
-
-combos = get_combinations(courses, 3)

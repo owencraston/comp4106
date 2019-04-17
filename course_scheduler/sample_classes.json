@@ -11,7 +11,8 @@
       "start_date": "Jan 07, 2019",
       "end_date": "Apr 09, 2019",
       "days": "Tue, Thu",
-      "time": "11:35,13:25",
+      "start_time": "11:35",
+      "end_time": "13:25",
       "building": "Canal Building",
       "room": 2202
     }, 
@@ -26,7 +27,8 @@
       "start_date": "Jan 07, 2019",
       "end_date": "Apr 09, 2019",
       "days": "Wed, Fri",
-      "time": "16:05,17:25",
+      "start_time": "16:05",
+      "end_time": "17:25",
       "building": "Azrieli Theatre",
       "room": 301
     },
@@ -41,7 +43,8 @@
       "start_date": "Jan 07, 2019",
       "end_date": "Apr 09, 2019",
       "days": "Tue, Thu",
-      "time": "13:05,14:25",
+      "start_time": "13:05",
+      "end_time": "14:25",
       "building": "Health Science Building",
       "room": 1301
     },
@@ -56,7 +59,8 @@
       "start_date": "Jan 07, 2019",
       "end_date": "Apr 09, 2019",
       "days": "Tue, Thu",
-      "time": "10:05,11:25",
+      "start_time": "10:05",
+      "end_time": "11:25",
       "building": "Health Science Building",
       "room": 1301
     }
