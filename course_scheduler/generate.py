@@ -2,6 +2,7 @@
 import json
 from course import Course
 from schedule import Schedule
+from itertools import combinations
 
 courses = []
 
@@ -14,5 +15,14 @@ with open('sample_classes.json') as sample_classes:
         courses.append(course)
 
 
-for i in courses:
-    i.print_course()
+def get_combinations(class_options, n):
+    combos = combinations(class_options, n)
+    return combos
+
+def print_combos(cmb):
+    for c in cmb:
+        for crs in c:
+            crs.print_course()
+
+
+combos = get_combinations(courses, 3)
