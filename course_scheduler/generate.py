@@ -3,6 +3,7 @@ import json
 from course import Course
 from schedule import Schedule
 from itertools import combinations
+from random import randint
 
 
 def populate_classes():
@@ -26,11 +27,17 @@ def print_combos(cmb):
         for crs in c:
             crs.print_course()
 
+def print_combo(combo):
+    for course in combo:
+        course.print_course()
+
 def test_schedule():
     schedule = Schedule([])
     course_list = populate_classes()
     combos = get_combinations(course_list, 3)
-    for course in combos[1]:
+    which_combo = randint(0, len(combos)-1)
+    print_combo(combos[which_combo])
+    for course in combos[which_combo]:
         schedule.add_course(course)
     return schedule
 

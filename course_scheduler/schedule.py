@@ -4,26 +4,55 @@ This class contains a lsit of courses
 """
 from course import Course
 import time
+from copy import deepcopy
 
 class Schedule:
     def __init__(self, courses):
         self.courses = courses
         self.course_count = len(courses)
-        self.time_table = self.generate_timetable()
+        self.time_table = self.generate_timetable(self.courses)
 
     def add_course(self, course):
-        self.courses.append(course)
-        self.course_count = len(self.courses)
-        self.time_table =  self.generate_timetable()
-    
-    def generate_timetable(self):
-        if len(self.courses):
+        temp_timetable = self.update_timetable(deepcopy(self.time_table), course)
+        if self.valid_timetable(temp_timetable):
+            self.courses.append(course)
+            self.course_count = len(self.courses)
+            self.time_table = temp_timetable
+        else:
+            print(f"Failed to add {course.subject} at {course.start_time}")
+            
+    def update_timetable(self, time_table, course):
+        for day in course.days:
+            time_table[day].append(course)
+            time_table[day] = self.sort(time_table[day])
+        return time_table
+
+    def generate_timetable(self, courses):
+        if len(courses):
             time_table = {"mon":[], "tue":[], "wed":[], "thu":[], "fri":[]}
-            for c in self.courses:
+            for c in courses:
                 for day in c.days:
                     time_table[day].append(c)
                     time_table[day] = self.sort(time_table[day])
-            return time_table
+            if self.valid_timetable(time_table):
+                return time_table
+        else:
+            return {"mon":[], "tue":[], "wed":[], "thu":[], "fri":[]}
+    
+    def valid_timetable(self, timetable):
+        # assume the courses list is sorted
+        for _, courses in timetable.items():
+            if len(courses):
+                prev_course = courses[0]
+                for course in courses[1:]:
+                    if __parse_time__(course.start_time) < __parse_time__(prev_course.end_time):
+                        print(f"error in timetable. collision with {prev_course.subject} ends at {prev_course.end_time} and {course.subject} starts at {course.start_time}\n")
+                        return False
+                    prev_course = course
+        return True
+
+
+
 
     def sort(self, courses):
         sorted_courses = sorted(courses, key=lambda c: __parse_time__(c.start_time))
