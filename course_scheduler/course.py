@@ -32,18 +32,20 @@ Meeting Date	Days	Time	Building	Room	Schedule	Instructor
 Jul 02, 2019 to Aug 14, 2019	Tue Thu	18:05 - 20:55	Azrieli Theatre	101	Lecture	Jason Hinek (Primary)
 """
 class Course:
-    def __init__(self, subject, crn, title, description, prerequisites, credit, instructor, start_date, end_date, days, time, building, room):
+    def __init__(self, subject, crn, title, required, description, prerequisites, credit, instructor, start_date, end_date, days, start_time, end_time, building, room):
         self.subject = subject
         self.crn = crn
         self.title = title
+        self.required = required
         self.description = description
         self.prerequisites = prerequisites
         self.credit = credit
         self.instructor = instructor
         self.start_date = start_date
         self.end_date = end_date
-        self.days = days
-        self.time = time
+        self.days = __parse_days__(days)
+        self.start_time = start_time
+        self.end_time = end_time
         self.building = building
         self.room = room
 
@@ -59,7 +61,8 @@ class Course:
                 f"start_date: {self.start_date}\n"
                 f"end_date: {self.end_date}\n"
                 f"days: {self.days}\n"
-                f"time: {self.time}\n"
+                f"start_time: {self.start_time}\n"
+                f"end_time: {self.end_time}\n"
                 f"building: {self.building}\n"
                 f"room: {self.room}\n"
             )
@@ -69,3 +72,15 @@ class Course:
     def print_course(self):
         str = self.to_string()
         print(str)
+    
+    def quick_print(self):
+        print(self.subject)
+
+def __parse_days__(day_string):
+    uncleaned_days = day_string.split(",")
+    days = []
+    for day in uncleaned_days:
+        day = day.replace(" ", "").lower()
+        days.append(day)
+    return days
+
