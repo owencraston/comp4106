@@ -22,10 +22,11 @@ class Schedule:
             for c in self.courses:
                 for day in c.days:
                     time_table[day].append(c)
+                    time_table[day] = self.sort(time_table[day])
             return time_table
 
-    def sort(self):
-        sorted_courses = sorted(self.courses, key=lambda c: __parse_time__(c["start_time"]))
+    def sort(self, courses):
+        sorted_courses = sorted(courses, key=lambda c: __parse_time__(c.start_time))
         return sorted_courses
     
     def print_time_table(self):
