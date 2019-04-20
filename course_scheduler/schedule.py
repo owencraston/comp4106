@@ -3,7 +3,7 @@
 This class contains a lsit of courses
 """
 from course import Course
-import time
+from datetime import datetime
 from copy import deepcopy
 
 class Schedule:
@@ -51,6 +51,19 @@ class Schedule:
                     prev_course = course
         return True
 
+    def get_wait_time(self):
+        total_time = 0
+        for _, courses in self.time_table.items():
+            if len(courses) >= 2:
+                prev_course = courses[0]
+                for course in courses[1:]:
+                    total_time += self.get_wait_time_between_classes(prev_course, course)
+        return total_time
+
+    def get_wait_time_between_classes(self, course1, course2):
+        # course 2 - course 1
+        time_delta = __parse_time__(course2.start_time) - __parse_time__(course1.end_time)
+        return int(time_delta.total_seconds()/60)
 
 
 
@@ -74,6 +87,6 @@ class Schedule:
 
 
 def __parse_time__(time_string):
-        t = time.strptime(time_string, '%H:%M')
+        t = datetime.strptime(time_string, '%H:%M')
         return t
 

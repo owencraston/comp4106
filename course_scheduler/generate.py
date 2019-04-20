@@ -42,6 +42,8 @@ def test_schedule():
     return schedule
 
 schedule = test_schedule()
+wait_time = schedule.get_wait_time()
+print(f"wait time: {wait_time}")
 
 schedule.print_time_table()
 
