@@ -12,8 +12,8 @@ def populate_classes():
         data = json.load(sample_classes)
         for c in data['courses']:
             course = Course(c['subject'], c['crn'], c['title'], c["required"],c['description'], c['prerequisites'],\
-                        c['credit'], c['instructor'], c['start_date'], c['end_date'], c['days'],\
-                        c['start_time'], c["end_time"], c['building'], c['room'])
+                c['credit'], c['instructor'], c['start_date'], c['end_date'], c['days'],\
+                c['start_time'], c["end_time"], c['building'], c['room'])
             courses.append(course)
     return courses
 
@@ -41,14 +41,40 @@ def test_schedule():
         schedule.add_course(course)
     return schedule
 
-schedule = test_schedule()
-wait_time = schedule.get_wait_time()
-print(f"wait time: {wait_time}")
+def build_base_schedule():
+    possible_courses = populate_classes()
+    required_courses = []
+    base_schedule = Schedule([])
+    for course in possible_courses:
+        if course.required:
+            required_courses.append(course)
+    # make shedule
+    for req_course in required_courses:
+        added = base_schedule.add_course(req_course)
+        if not added:
+            # this is purely based on the order the classes are parsed
+            print(f"Unable to add required courses {req_course.subject}. These courses have conflicts")
+    return base_schedule
 
-schedule.print_time_table()
+
+def __free_day_score__(schedule):
+    # give alot of points for empty days
+    time_table = schedule.time_table
+    score = 0
+    for day, _ in time_table.items():
+        if not len(time_table[day]):
+            score += 100
+    return score
+
+def get_schedule_score(schedule):
+    return __free_day_score__(schedule)
 
 
 
-# for c in course_list:
-#     c.print_course()
+    
+        
+base_schedule = build_base_schedule()
+base_schedule.print_time_table()
+print(f"Base wait time: {base_schedule.total_wait_time}")
+print(f"Schedule score = {get_schedule_score(base_schedule)}")
 

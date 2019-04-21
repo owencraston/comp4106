@@ -11,6 +11,7 @@ class Schedule:
         self.courses = courses
         self.course_count = len(courses)
         self.time_table = self.generate_timetable(self.courses)
+        self.total_wait_time = self.get_wait_time()
 
     def add_course(self, course):
         temp_timetable = self.update_timetable(deepcopy(self.time_table), course)
@@ -18,8 +19,13 @@ class Schedule:
             self.courses.append(course)
             self.course_count = len(self.courses)
             self.time_table = temp_timetable
+            self.total_wait_time = self.get_wait_time()
+            # return true since class was successfully addedd
+            return True
         else:
             print(f"Failed to add {course.subject} at {course.start_time}")
+            # return false since class was not added
+            return False
             
     def update_timetable(self, time_table, course):
         for day in course.days:
