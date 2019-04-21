@@ -73,6 +73,29 @@ class Course:
         str = self.to_string()
         print(str)
     
+    def equals(self, other_course):
+        # check if the classes are even the same
+        if isinstance(other_course, Course):
+            return (
+                self.subject == other_course.subject and
+                self.crn == other_course.crn and
+                self.title == other_course.title and
+                self.required == other_course.required and
+                self.description == other_course.description and
+                self.prerequisites == other_course.prerequisites and
+                self.credit == other_course.credit and
+                self.instructor == other_course.instructor and
+                self.start_date == other_course.start_date and
+                self.end_date == other_course.end_date and
+                self.days == other_course.days and
+                self.start_time == other_course.start_time and
+                self.end_time == other_course.end_time and
+                self.building == other_course.building and
+                self.room == other_course.room
+            )
+        else:
+            return False
+    
     def quick_print(self):
         print(self.subject)
 

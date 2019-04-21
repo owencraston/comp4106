@@ -4,6 +4,7 @@ from course import Course
 from schedule import Schedule
 from itertools import combinations
 from random import randint
+from copy import deepcopy
 
 
 def populate_classes():
@@ -69,12 +70,37 @@ def __free_day_score__(schedule):
 def get_schedule_score(schedule):
     return __free_day_score__(schedule)
 
+def remove_duplicates(master_list, possible_courses):
+    duplicate_courses = []
+    for course in possible_courses:
+        for set_course in master_list:
+            if set_course.equals(course):
+                duplicate_courses.append(course)
+    for c in duplicate_courses:
+        possible_courses.remove(c)
+    return possible_courses
 
+
+def hill_climb_search(possible_courses, course_count):
+    # starting state is the base schedule with all requirments
+    base_schedule = build_base_schedule()
+    remaining_courses = remove_duplicates(base_schedule.courses, possible_classes)
+    return remaining_courses
 
     
         
-base_schedule = build_base_schedule()
-base_schedule.print_time_table()
-print(f"Base wait time: {base_schedule.total_wait_time}")
-print(f"Schedule score = {get_schedule_score(base_schedule)}")
+s = build_base_schedule()
+s.print_time_table()
+print(f"Base wait time: {s.total_wait_time}")
+print(f"Schedule score = {get_schedule_score(s)}")
+print("course list")
+for c in s.courses:
+    c.quick_print()
+
+possible_classes = populate_classes()
+new_possible_classes = hill_climb_search(deepcopy(possible_classes), 3)
+print("remaining courses")
+for c in new_possible_classes:
+    c.quick_print()
+
 

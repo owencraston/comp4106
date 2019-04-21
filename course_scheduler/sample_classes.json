@@ -1,7 +1,7 @@
 {
   "courses": [
     {
-      "subject": "COMP 1501",
+      "subject": "COMP 1501 A",
       "crn": 11057,
       "title": "Intro to Computer Game Design",
       "required": false,
@@ -18,7 +18,7 @@
       "room": 2202
     }, 
     {
-      "subject": "COMP 2401",
+      "subject": "COMP 2401 A",
       "crn": 11069,
       "title": "Introduction to Systems Programming",
       "required": true,
