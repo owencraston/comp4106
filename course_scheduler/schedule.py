@@ -14,6 +14,8 @@ class Schedule:
         self.total_wait_time = self.get_wait_time()
 
     def add_course(self, course):
+        if course in self.courses:
+            return False
         temp_timetable = self.update_timetable(deepcopy(self.time_table), course)
         if self.valid_timetable(temp_timetable):
             self.courses.append(course)
@@ -23,7 +25,7 @@ class Schedule:
             # return true since class was successfully addedd
             return True
         else:
-            print(f"Failed to add {course.subject} at {course.start_time}")
+            # print(f"Failed to add {course.subject} at {course.start_time}")
             # return false since class was not added
             return False
             
@@ -52,7 +54,7 @@ class Schedule:
                 prev_course = courses[0]
                 for course in courses[1:]:
                     if __parse_time__(course.start_time) < __parse_time__(prev_course.end_time):
-                        print(f"error in timetable. collision with {prev_course.subject} ends at {prev_course.end_time} and {course.subject} starts at {course.start_time}\n")
+                        # print(f"error in timetable. collision with {prev_course.subject} ends at {prev_course.end_time} and {course.subject} starts at {course.start_time}\n")
                         return False
                     prev_course = course
         return True
