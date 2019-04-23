@@ -103,15 +103,14 @@ def search(possible_courses, course_count):
     base_schedule = build_base_schedule()
     remaining_courses = remove_duplicates(base_schedule.courses, possible_classes)
     current_node = base_schedule
+    remaining_courses = remove_time_collisions(current_node, remaining_courses)
     # check if we have a full schedule yet or there are no more options
-    while current_node.course_count < course_count or not remaining_courses:
+    while current_node.course_count < course_count and remaining_courses:
         # this will be our next addition to the schedule
         next_node = None
         next_score = -100000000
         # value for storing the max score from an added course
         remaining_courses = remove_time_collisions(current_node, remaining_courses)
-        for c in remaining_courses:
-            c.quick_print()
         # get the next best addition to the schedule
         for potential_course in remaining_courses:
             temp_schedule = deepcopy(current_node)
@@ -127,32 +126,18 @@ def search(possible_courses, course_count):
                     next_score = temp_score
                     # keep this node
                     next_node = deepcopy(potential_course)
-                    print(f"next node {next_node.subject}")
-        # current_node.print_time_table()
         # add the next_node as the next course in the schedule
-        # print(f"adding {next_node.subject}")
         current_node.add_course(next_node)
         # remove next_node from the remaining courses
-        remaining_courses = filter(lambda course: course.equals(next_node), remaining_courses)
-        print("remaining")
-        for c in remaining_courses:
-            c.quick_print()
+        remaining_courses = list(set(remove_time_collisions(current_node, remaining_courses)))
     # at this point we should have a full schedule adn we'll return it
     return current_node
-
-        
-# s = build_base_schedule()
-# s.print_time_table()
-# print(f"Base wait time: {s.total_wait_time}")
-# print(f"Schedule score = {get_schedule_score(s)}")
-# print("course list")
-# for c in s.courses:
-#     c.quick_print()
 
 possible_classes = populate_classes()
 schedule = search(deepcopy(possible_classes), 5)
 
 schedule.print_time_table()
+print(f"shedule score {get_schedule_score(schedule)}")
 
 
 

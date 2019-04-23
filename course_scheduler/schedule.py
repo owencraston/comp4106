@@ -14,7 +14,7 @@ class Schedule:
         self.total_wait_time = self.get_wait_time()
 
     def add_course(self, course):
-        if course in self.courses:
+        if self.is_in_schedule(course):
             return False
         temp_timetable = self.update_timetable(deepcopy(self.time_table), course)
         if self.valid_timetable(temp_timetable):
@@ -58,6 +58,12 @@ class Schedule:
                         return False
                     prev_course = course
         return True
+    
+    def is_in_schedule(self, course):
+        for c in self.courses:
+            if c.equals(course):
+                return True
+        return False
 
     def get_wait_time(self):
         total_time = 0
