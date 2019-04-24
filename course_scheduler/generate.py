@@ -63,17 +63,13 @@ def __free_day_score__(schedule):
     score = 0
     for day, _ in time_table.items():
         if not len(time_table[day]):
-            score += 100
+            score += 200
     return score
-
-def __wait_time_score__(schedule):
-    return -1 * (schedule.total_wait_time)
 
 def get_schedule_score(schedule):
     free_days = __free_day_score__(schedule)
-    # wait_time = __wait_time_score__(Schedule)
     # if there are any free days it is positive, we subtract the wait time from this score
-    return free_days
+    return free_days - schedule.total_wait_time
 
 def remove_duplicates(master_list, possible_courses):
     duplicate_courses = []
@@ -138,6 +134,7 @@ schedule = search(deepcopy(possible_classes), 5)
 
 schedule.print_time_table()
 print(f"shedule score {get_schedule_score(schedule)}")
+print(f"wait_time {schedule.total_wait_time}")
 
 
 
