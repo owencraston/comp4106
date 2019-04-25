@@ -120,11 +120,12 @@ while running == 1:
             for i in range(possible_course_count):
                 print("please fill out the follwoing course information \n")
                 course = get_course_info()
-                print(f"successfully added {course.print_course()}")
                 while not course:
                     print("the course did not work please try again")
                     course = get_course_info()
                 possible_courses.append(course)
+                print(f"successfully added \n{course.to_string()}")
+            # we are done and can get the schedule
             get_user_schedule(possible_courses, course_count, free_days, wait_time)
     elif choice == 1:
         possible_courses = gen.populate_classes()
