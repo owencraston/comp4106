@@ -110,7 +110,6 @@ def __guess_classes_per_day__(course_count, days_off):
 
 def guess_total_wait_time(course_count, days_off, average_wait_time):
     classes_per_day = __guess_classes_per_day__(course_count, days_off)
-    print(classes_per_day)
     estimated_total_wait_time = 0
     for classes in classes_per_day:
         estimated_total_wait_time += ((classes - 1) * average_wait_time)
@@ -159,6 +158,8 @@ def hill_climb_search(possible_courses, course_count, target_free_days, target_w
     remaining_courses = remove_duplicates(base_schedule.courses, possible_classes)
     current_node = base_schedule
     remaining_courses = remove_time_collisions(current_node, remaining_courses)
+    goal_score = (target_free_days * 200) - (guess_total_wait_time(course_count, target_free_days, target_wait_time))
+    print(f"goal score {goal_score}")
 
     # check if we have a full schedule yet or there are no more options
     while current_node.course_count < course_count and remaining_courses:
@@ -184,28 +185,25 @@ def hill_climb_search(possible_courses, course_count, target_free_days, target_w
                     next_node = deepcopy(potential_course)
         # add the next_node as the next course in the schedule
         current_node.add_course(next_node)
-
-
-        # we need to return if we have reached our goal, a schedule that has the desired amount of classes and meets the users goals
-        # if current_node.course_count == course_count:
-
-
-
-
         # remove next_node from the remaining courses
         remaining_courses = list(set(remove_time_collisions(current_node, remaining_courses)))
+
+        # we need to return if we have reached our goal, a schedule that has the desired amount of classes and meets the users goals
+        if current_node.course_count == course_count and get_schedule_score(current_node) >= goal_score:
+            print("found a schedule that meets your goals")
+            return current_node
+        
     # at this point we should have a full schedule adn we'll return it
     return current_node
     
 
 possible_classes = populate_classes()
-schedule = search(deepcopy(possible_classes), 4)
+# possible_classes, 4 class schedule, ideally 1 free break, target 30 minutes of wait time
+schedule = hill_climb_search(deepcopy(possible_classes), 4, 1, 30)
 
-print(guess_total_wait_time(5, 0, 20))
-
-# schedule.print_time_table()
-# print(f"shedule score {get_schedule_score(schedule)}")
-# print(f"wait_time {schedule.total_wait_time}")
+schedule.print_time_table()
+print(f"shedule score {get_schedule_score(schedule)}")
+print(f"wait_time {schedule.total_wait_time}")
 
 
 
