@@ -11,8 +11,8 @@ def populate_classes():
     with open('sample_classes.json') as sample_classes:
         data = json.load(sample_classes)
         for c in data['courses']:
-            course = Course(c['subject'], c['crn'], c['title'], c["required"],c['description'], c['prerequisites'],\
-                c['credit'], c['instructor'], c['start_date'], c['end_date'], c['days'],\
+            course = Course(c['subject'], c['title'], c["required"],\
+                c['instructor'], c['start_date'], c['end_date'], c['days'],\
                 c['start_time'], c["end_time"], c['building'], c['room'])
             courses.append(course)
     return courses
@@ -41,8 +41,7 @@ def test_schedule():
         schedule.add_course(course)
     return schedule
 
-def build_base_schedule():
-    possible_courses = populate_classes()
+def build_base_schedule(possible_courses):
     required_courses = []
     base_schedule = Schedule([])
     for course in possible_courses:
@@ -118,7 +117,7 @@ def guess_total_wait_time(course_count, days_off, average_wait_time):
 
 def search(possible_courses, course_count):
     # starting state is the base schedule with all required courses
-    base_schedule = build_base_schedule()
+    base_schedule = build_base_schedule(possible_courses)
     remaining_courses = remove_duplicates(base_schedule.courses, possible_classes)
     current_node = base_schedule
     remaining_courses = remove_time_collisions(current_node, remaining_courses)
@@ -154,8 +153,8 @@ def search(possible_courses, course_count):
 
 def hill_climb_search(possible_courses, course_count, target_free_days, target_wait_time):
     # starting state is the base schedule with all required courses
-    base_schedule = build_base_schedule()
-    remaining_courses = remove_duplicates(base_schedule.courses, possible_classes)
+    base_schedule = build_base_schedule(deepcopy(possible_courses))
+    remaining_courses = remove_duplicates(base_schedule.courses, possible_courses)
     current_node = base_schedule
     remaining_courses = remove_time_collisions(current_node, remaining_courses)
     goal_score = (target_free_days * 200) - (guess_total_wait_time(course_count, target_free_days, target_wait_time))
@@ -197,13 +196,13 @@ def hill_climb_search(possible_courses, course_count, target_free_days, target_w
     return current_node
     
 
-possible_classes = populate_classes()
-# possible_classes, 4 class schedule, ideally 1 free break, target 30 minutes of wait time
-schedule = hill_climb_search(deepcopy(possible_classes), 4, 1, 30)
+# possible_classes = populate_classes()
+# # possible_classes, 4 class schedule, ideally 1 free break, target 30 minutes of wait time
+# schedule = hill_climb_search(deepcopy(possible_classes), 4, 1, 30)
 
-schedule.print_time_table()
-print(f"shedule score {get_schedule_score(schedule)}")
-print(f"wait_time {schedule.total_wait_time}")
+# schedule.print_time_table()
+# print(f"shedule score {get_schedule_score(schedule)}")
+# print(f"wait_time {schedule.total_wait_time}")
 
 
 

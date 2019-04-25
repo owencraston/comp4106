@@ -32,14 +32,10 @@ Meeting Date	Days	Time	Building	Room	Schedule	Instructor
 Jul 02, 2019 to Aug 14, 2019	Tue Thu	18:05 - 20:55	Azrieli Theatre	101	Lecture	Jason Hinek (Primary)
 """
 class Course:
-    def __init__(self, subject, crn, title, required, description, prerequisites, credit, instructor, start_date, end_date, days, start_time, end_time, building, room):
+    def __init__(self, subject, title, required, instructor, start_date, end_date, days, start_time, end_time, building, room):
         self.subject = subject
-        self.crn = crn
         self.title = title
         self.required = required
-        self.description = description
-        self.prerequisites = prerequisites
-        self.credit = credit
         self.instructor = instructor
         self.start_date = start_date
         self.end_date = end_date
@@ -52,11 +48,7 @@ class Course:
     def to_string(self):
         str = (
                 f"subject: {self.subject}\n"
-                f"crn: {self.crn}\n"
                 f"title: {self.title}\n"
-                f"description: {self.description}\n"
-                f"prerequisites: {self.prerequisites}\n"
-                f"credit: {self.credit}\n"
                 f"instructor: {self.instructor}\n"
                 f"start_date: {self.start_date}\n"
                 f"end_date: {self.end_date}\n"
@@ -78,12 +70,8 @@ class Course:
         if isinstance(other_course, Course):
             return (
                 self.subject == other_course.subject and
-                self.crn == other_course.crn and
                 self.title == other_course.title and
                 self.required == other_course.required and
-                self.description == other_course.description and
-                self.prerequisites == other_course.prerequisites and
-                self.credit == other_course.credit and
                 self.instructor == other_course.instructor and
                 self.start_date == other_course.start_date and
                 self.end_date == other_course.end_date and
