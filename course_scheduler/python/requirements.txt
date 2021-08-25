@@ -65,7 +65,7 @@ semantic-version==2.6.0
 singledispatch==3.4.0.3
 six==1.10.0
 subprocess32==3.2.7
-tensorflow==0.12.1
+tensorflow==2.5.1
 toolz==0.8.2
 trollius==2.2
 tzlocal==1.5.1
