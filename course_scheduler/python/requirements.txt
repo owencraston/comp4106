@@ -46,7 +46,7 @@ pbr==1.10.0
 peewee==2.8.5
 Pillow==4.0.0
 post==1.0.1
-protobuf==3.2.0
+protobuf==3.18.3
 public==1.0.1
 pygame==1.9.4
 pyimage==0.1.1
